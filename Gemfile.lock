@@ -242,7 +242,7 @@ GEM
     regexp_parser (2.10.0)
     reline (0.6.0)
       io-console (~> 0.5)
-    resolv (0.3.0)
+    resolv (0.6.0)
     rexml (3.4.0)
     rspec-core (3.13.3)
       rspec-support (~> 3.13.0)
