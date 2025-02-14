@@ -1,0 +1,21 @@
+<%= turbo_stream.replace "results" do %>
+  <p>No results found.</p>
+<% end %>
+
+<%= turbo_stream.replace "domain_form" do %>
+  <%= form_with url: dig_lookup_path, method: :post, local: true do %>
+    <div>
+      <%= label_tag :domain, "Enter Domain:" %>
+      <%= text_field_tag :domain %>
+    </div>
+    <div>
+      <%= submit_tag "Lookup" %>
+    </div>
+  <% end %>
+
+  <%= form_with url: dig_clear_path, method: :post, local: true do %>
+    <div>
+      <%= submit_tag "Clear" %>
+    </div>
+  <% end %>
+<% end %>

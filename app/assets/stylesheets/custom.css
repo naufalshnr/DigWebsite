@@ -1,0 +1,94 @@
+/* app/assets/stylesheets/custom.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: #f4f4f9;
+}
+
+h1 {
+  color: #333;
+  text-align: center;
+}
+
+h2 {
+  color: #555;
+}
+
+h3 {
+  color: #777;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+p.error {
+  color: red;
+}
+
+p {
+  color: #333;
+}
+
+.lookup-form {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-lookup {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.btn-lookup:hover {
+  background-color: #0056b3;
+}
+
+.btn-clear {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.btn-clear:hover {
+  background-color: #c82333;
+}

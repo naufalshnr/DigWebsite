@@ -1,0 +1,117 @@
+require "resolv"
+require "dnsruby"
+
+class DigController < ApplicationController
+  def index
+    @results = {}
+    @domain = nil
+    @error = nil
+  end
+
+  def lookup
+    @domain = params[:domain]
+    if @domain.blank?
+      @error = "Domain name cannot be empty."
+      @results = {}
+      respond_to do |format|
+        format.turbo_stream
+        format.html { render :index }
+      end
+      return
+    end
+
+    @results = {}
+    lookup_types = {
+      "A" => Dnsruby::Types.A,
+      "AAAA" => Dnsruby::Types.AAAA,
+      "CNAME" => Dnsruby::Types.CNAME,
+      "MX" => Dnsruby::Types.MX,
+      "TXT" => Dnsruby::Types.TXT,
+      "NS" => Dnsruby::Types.NS,
+      "PTR" => Dnsruby::Types.PTR
+    }
+
+    resolver = Dnsruby::Resolver.new
+
+    lookup_types.each do |type, resource|
+      begin
+        @results[type] = resolver.query(@domain, resource).answer
+        Rails.logger.debug "Results for #{type}: #{@results[type].inspect}"
+      rescue => e
+        Rails.logger.error "Error during DNS lookup for #{type}: #{e.message}"
+        @results[type] = "Error during DNS lookup: #{e.message}"
+      end
+    end
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { render :index }
+    end
+  end
+
+  def clear
+    Rails.logger.debug "Clearing results"
+    @results = {}
+    @domain = nil
+    @error = nil
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { render :index }
+    end
+  end
+end
+
+<%= turbo_stream.replace "results" do %>
+  <% if @results.present? %>
+    <h2>Results for <%= @domain %>:</h2>
+    <% @results.each do |type, results| %>
+      <h3>
+        <% case type %>
+        <% when "A" %>
+          A (IPv4) Records:
+        <% when "AAAA" %>
+          AAAA (IPv6) Records:
+        <% when "CNAME" %>
+          CNAME Records:
+        <% when "MX" %>
+          MX Records:
+        <% when "TXT" %>
+          TXT Records:
+        <% when "NS" %>
+          NS Records:
+        <% when "PTR" %>
+          PTR Records:
+        <% else %>
+          <%= type %> Records:
+        <% end %>
+      </h3>
+      <% if results.is_a?(String) %>
+        <p style="color: red;"><%= results %></p>
+      <% elsif results.any? %>
+        <ul>
+          <% results.each do |result| %>
+            <li>
+              <% case type %>
+              <% when "A", "AAAA" %>
+                <%= result.address %>
+              <% when "CNAME", "NS", "PTR" %>
+                <%= result.name.to_s %>
+              <% when "MX" %>
+                <%= result.exchange.to_s %> (Preference: <%= result.preference %>)
+              <% when "TXT" %>
+                <%= result.strings.join(" ") %>
+              <% else %>
+                <%= result.inspect %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p>No <%= type %> records found.</p>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p>No results found.</p>
+  <% end %>
+<% end %>
