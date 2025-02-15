@@ -1,4 +1,4 @@
-require "resolv"
+require "dnsruby"
 
 class DigController < ApplicationController
   def index
@@ -21,20 +21,21 @@ class DigController < ApplicationController
 
     @results = {}
     lookup_types = {
-      "A" => Resolv::DNS::Resource::IN::A,
-      "AAAA" => Resolv::DNS::Resource::IN::AAAA,
-      "CNAME" => Resolv::DNS::Resource::IN::CNAME,
-      "MX" => Resolv::DNS::Resource::IN::MX,
-      "TXT" => Resolv::DNS::Resource::IN::TXT,
-      "NS" => Resolv::DNS::Resource::IN::NS,
-      "PTR" => Resolv::DNS::Resource::IN::PTR
+      "A" => Dnsruby::Types.A,
+      "AAAA" => Dnsruby::Types.AAAA,
+      "CNAME" => Dnsruby::Types.CNAME,
+      "MX" => Dnsruby::Types.MX,
+      "TXT" => Dnsruby::Types.TXT,
+      "NS" => Dnsruby::Types.NS,
+      "PTR" => Dnsruby::Types.PTR
     }
 
-    dns_resolver = Resolv::DNS.new(nameserver: [ "8.8.8.8" ])
+    resolver = Dnsruby::Resolver.new(nameserver: [ "8.8.8.8" ]) # Use Google's public DNS server
 
     lookup_types.each do |type, resource|
       begin
-        @results[type] = dns_resolver.getresources(@domain, resource)
+        @results[type] = resolver.query(@domain, resource).answer
+        Rails.logger.debug "Results for #{type}: #{@results[type].inspect}"
       rescue => e
         Rails.logger.error "Error during DNS lookup for #{type}: #{e.message}"
         @results[type] = "Error during DNS lookup: #{e.message}"

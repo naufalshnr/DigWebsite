@@ -1,22 +1,16 @@
 <h1>Domain Information Groper</h1>
 
-<%= turbo_frame_tag "domain_form" do %>
-  <%= form_with url: dig_lookup_path, method: :post, local: true, html: { class: "lookup-form" } do %>
-    <div class="form-group">
-      <%= label_tag :domain, "Enter Domain:", class: "form-label" %>
-      <%= text_field_tag :domain, nil, class: "form-input" %>
-    </div>
-    <div class="button-group">
-      <%= submit_tag "Lookup", class: "btn btn-lookup" %>
-    </div>
+<div class="lookup-form">
+  <%= turbo_frame_tag "domain_form" do %>
+    <%= form_with url: dig_lookup_path, method: :post, local: true do %>
+      <div class="form-group-inline">
+        <%= label_tag :domain, "Enter Domain:", class: "form-label-inline" %>
+        <%= text_field_tag :domain, nil, class: "form-input-inline" %>
+        <%= submit_tag "Lookup", class: "btn btn-lookup-inline", style: "background-color: #007bff; color: #fff; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;" %>
+      </div>
+    <% end %>
   <% end %>
-
-  <%= form_with url: dig_clear_path, method: :post, local: true, html: { class: "clear-form" } do %>
-    <div class="button-group">
-      <%= submit_tag "Clear", class: "btn btn-clear" %>
-    </div>
-  <% end %>
-<% end %>
+</div>
 
 <%= turbo_frame_tag "results" do %>
   <div id="results">
@@ -36,8 +30,10 @@
                 <% case type %>
                 <% when "A", "AAAA" %>
                   <%= result.address %>
-                <% when "CNAME", "NS", "PTR" %>
+                <% when "CNAME", "PTR" %>
                   <%= result.name.to_s %>
+                <% when "NS" %>
+                  <%= result.domainname.to_s %>
                 <% when "MX" %>
                   <%= result.exchange.to_s %> (Preference: <%= result.preference %>)
                 <% when "TXT" %>
@@ -51,6 +47,11 @@
         <% else %>
           <p>No <%= type %> records found.</p>
         <% end %>
+      <% end %>
+      <%= form_with url: dig_clear_path, method: :post, local: true do %>
+        <div class="button-group">
+          <%= submit_tag "Clear", class: "btn btn-clear" %>
+        </div>
       <% end %>
     <% else %>
       <p>No results found.</p>
