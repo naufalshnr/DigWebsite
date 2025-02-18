@@ -1,21 +1,21 @@
 /* app/assets/stylesheets/custom.css */
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #dc3545;
+  --text-color: #333;
+  --background-color: #f4f4f9;
+  --heading-color: #0905fd;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 20px;
-  background-color: #f4f4f9;
+  background-color: var(--background-color);
 }
 
-h1 {
-  color: #333;
+h1, h2, h3 {
+  color: var(--heading-color);
   text-align: center;
-}
-
-h2 {
-  color: #0905fd;
-}
-
-h3 {
-  color: #0905fd;
 }
 
 ul {
@@ -26,7 +26,6 @@ ul {
 li {
   margin: 5px 0;
   padding: 10px;
-
 }
 
 p.error {
@@ -34,7 +33,7 @@ p.error {
 }
 
 p {
-  color: #333;
+  color: var(--text-color);
 }
 
 .lookup-form {
@@ -56,11 +55,11 @@ p {
 }
 
 .form-input-inline {
-  width: 200px; /* Reduced width */
+  width: 200px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Added shadow box style */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .button-group {
@@ -69,19 +68,15 @@ p {
 }
 
 .btn {
-  padding: 8px 16px; /* Reduced padding */
+  padding: 8px 16px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
 .btn.btn-lookup-inline {
-  padding: 8px 16px; /* Reduced padding */
-  background-color: #007bff;
+  background-color: var(--primary-color);
   color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .btn.btn-lookup-inline:hover {
@@ -89,10 +84,21 @@ p {
 }
 
 .btn-clear {
-  background-color: #dc3545;
+  background-color: var(--secondary-color);
   color: #fff;
 }
 
 .btn-clear:hover {
   background-color: #c82333;
+}
+
+@media (max-width: 600px) {
+  .form-group-inline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-input-inline {
+    width: 100%;
+  }
 }

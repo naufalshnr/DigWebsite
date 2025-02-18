@@ -1,60 +1,148 @@
-<h1>Domain Information Groper</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Information Groper</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
-<div class="lookup-form">
-  <%= turbo_frame_tag "domain_form" do %>
-    <%= form_with url: dig_lookup_path, method: :post, local: true do %>
-      <div class="form-group-inline">
-        <%= label_tag :domain, "Enter Domain:", class: "form-label-inline" %>
-        <%= text_field_tag :domain, nil, class: "form-input-inline" %>
-        <%= submit_tag "Lookup", class: "btn btn-lookup-inline", style: "background-color: #007bff; color: #fff; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;" %>
-      </div>
-    <% end %>
-  <% end %>
-</div>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
-<%= turbo_frame_tag "results" do %>
-  <div id="results">
-    <% if @error.present? %>
-      <p class="error"><%= @error %></p>
-    <% end %>
-    <% if @results.present? %>
-      <h2>Results for <%= @domain %>:</h2>
-      <% @results.each do |type, results| %>
-        <h3><%= type %> Records:</h3>
-        <% if results.is_a?(String) %>
-          <p class="error"><%= results %></p>
-        <% elsif results.any? %>
-          <ul>
-            <% results.each do |result| %>
-              <li>
-                <% case type %>
-                <% when "A", "AAAA" %>
-                  <%= result.address %>
-                <% when "CNAME", "PTR" %>
-                  <%= result.name.to_s %>
-                <% when "NS" %>
-                  <%= result.domainname.to_s %>
-                <% when "MX" %>
-                  <%= result.exchange.to_s %> (Preference: <%= result.preference %>)
-                <% when "TXT" %>
-                  <%= result.strings.join(" ") %>
-                <% else %>
-                  <%= result.inspect %>
+      body {
+        background-color: #ffffff; /* White background */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+      }
+
+      .container {
+        background-color: #f5823d; /* Orange background */
+        padding: 40px;
+        border-radius: 45px;
+        width: 650px;
+        text-align: center;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        margin: 30px 0;
+      }
+
+      h1, h2, h3 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+      }
+
+      .machine-text {
+      font-family: 'IBM Plex Mono', monospace; /* Monospaced font */
+      font-size: 14px;
+      background-color: #222;
+      color: #00ff00;
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
+      }
+
+      .form-control {
+      
+        width: 10px;  /* Adjust as needed (e.g., 50%, 400px, etc.) */
+        max-width: 500px; /* Prevents it from becoming too wide */
+        margin: 0 auto; /* Centers the input field */
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+        margin-top: 10px;
+      }
+
+      .btn-primary {
+          background-color: #00bcd4;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 20px;
+          margin-top: 10px;
+          margin-bottom: 20px;
+          cursor: pointer;
+      }
+
+      .btn-primary:hover {
+        background-color: #0097a7;
+      }
+
+      .list-group-item {
+        background-color: transparent; /* Removes white background */
+        border: none; /* Removes borders */
+        color: white; /* Ensures readability */
+      }
+
+
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Domain Information Groper</h1>
+        <div class="lookup-form">
+            <%= turbo_frame_tag "domain_form" do %>
+                <%= form_with url: dig_lookup_path, method: :post, local: true do %>
+                    <div class="form-group">
+                        <%= label_tag :domain, "Enter Domain:", class: "form-label" %>
+                        <%= text_field_tag :domain, nil, class: "form-control", placeholder: "Domain Name..." %>
+                    </div>
+                    <%= submit_tag "Lookup", class: "btn btn-primary" %>
                 <% end %>
-              </li>
             <% end %>
-          </ul>
-        <% else %>
-          <p>No <%= type %> records found.</p>
-        <% end %>
-      <% end %>
-      <%= form_with url: dig_clear_path, method: :post, local: true do %>
-        <div class="button-group">
-          <%= submit_tag "Clear", class: "btn btn-clear" %>
         </div>
-      <% end %>
-    <% else %>
-      <p>No results found.</p>
-    <% end %>
-  </div>
-<% end %>
+        <%= turbo_frame_tag "results" do %>
+            <div id="results">
+                <% if @error.present? %>
+                    <p class="text-danger"><%= @error %></p>
+                <% end %>
+                <% if @results.present? %>
+                    <h2>Results for <%= @domain %>:</h2>
+                    <% @results.each do |type, results| %>
+                        <h3><%= type %> Records:</h3>
+                        <% if results.is_a?(String) %>
+                            <p class="text-danger"><%= results %></p>
+                        <% elsif results.any? %>
+                            <ul class="list-group">
+                                <% results.each do |result| %>
+                                    <li class="list-group-item">
+                                        <% case type %>
+                                        <% when "A", "AAAA" %>
+                                            <span class="machine-text"><%= result.address %></span>
+                                        <% when "CNAME", "PTR" %>
+                                            <span class="machine-text"><%= result.name.to_s %></span>
+                                        <% when "NS" %>
+                                            <span class="machine-text"><%= result.domainname.to_s %></span>
+                                        <% when "MX" %>
+                                            <span class="machine-text"><%= result.exchange.to_s %> (Preference: <%= result.preference %>)
+                                        <% when "TXT" %></span>
+                                            <span class="machine-text"><%= result.strings.join(" ") %></span>
+                                        <% else %>
+                                            <span class="machine-text"><%= result.inspect %></span>
+                                        <% end %>
+                                    </li>
+                                <% end %>
+                            </ul>
+                        <% else %>
+                            <p>No <%= type %> records found.</p>
+                        <% end %>
+                    <% end %>
+                    <%= form_with url: dig_clear_path, method: :post, local: true do %>
+                        <%= submit_tag "Clear", class: "btn btn-danger mt-3" %>
+                    <% end %>
+                <% else %>
+                    <p>No results found.</p>
+                <% end %>
+            </div>
+        <% end %>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
